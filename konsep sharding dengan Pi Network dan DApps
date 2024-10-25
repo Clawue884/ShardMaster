@@ -1,0 +1,11 @@
+Network API: Menghubungkan aplikasi ke jaringan Pi Network untuk mengirim dan menerima transaksi melalui API yang disediakan.
+
+
+2. DApp Integration: Mengintegrasikan DApp untuk berinteraksi dengan smart contract atau transaksi di dalam jaringan.
+Perubahan yang akan ditambahkan:
+
+Simulasi Pi Network API: Fungsi yang akan berperan sebagai komunikasi antara DApp dan jaringan Pi.
+
+Smart Contract Deployment: Implementasi smart contract sederhana untuk DApps.
+
+Transaction Processing via Pi Network: Penggunaan Pi Network untuk memproses transaksi antar shard.
