@@ -1,0 +1,10 @@
+Partitioning Transactions: Pemecahan jaringan menjadi beberapa shard untuk memproses transaksi paralel.
+
+
+2. Transaction Routing: Mengatur rute transaksi ke shard yang tepat.
+
+
+3. Consensus Mechanism: Setiap shard harus menggunakan mekanisme konsensus terpisah untuk transaksi yang diproses di dalamnya.
+
+
+4. Cross-Shard Communication: Mengatur komunikasi antara shard agar saling sinkron.
