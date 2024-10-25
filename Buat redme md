@@ -1,0 +1,79 @@
+import hashlib
+import random
+from concurrent.futures import ThreadPoolExecutor
+from threading import Lock
+
+# Simulasi transaksi
+class Transaction:
+    def __init__(self, sender, receiver, amount):
+        self.sender = sender
+        self.receiver = receiver
+        self.amount = amount
+        self.tx_hash = hashlib.sha256(f'{sender}{receiver}{amount}'.encode()).hexdigest()
+
+    def __str__(self):
+        return f'Transaction({self.sender} -> {self.receiver}: {self.amount})'
+
+# Simulasi Shard
+class Shard:
+    def __init__(self, shard_id):
+        self.shard_id = shard_id
+        self.transactions = []
+        self.lock = Lock()
+
+    def add_transaction(self, transaction):
+        with self.lock:
+            self.transactions.append(transaction)
+
+    def __str__(self):
+        return f'Shard-{self.shard_id} with {len(self.transactions)} transactions'
+
+# Master Pecahan (ShardMaster)
+class ShardMaster:
+    def __init__(self, num_shards):
+        self.shards = [Shard(i) for i in range(num_shards)]
+        self.num_shards = num_shards
+        self.lock = Lock()
+
+    # Fungsi untuk mendapatkan shard berdasarkan transaksi (berbasis hash sender)
+    def get_shard_for_transaction(self, transaction):
+        shard_index = int(transaction.tx_hash, 16) % self.num_shards
+        return self.shards[shard_index]
+
+    # Fungsi untuk menambahkan transaksi ke shard yang sesuai
+    def add_transaction(self, transaction):
+        shard = self.get_shard_for_transaction(transaction)
+        shard.add_transaction(transaction)
+
+    def process_transactions(self, transactions):
+        with ThreadPoolExecutor() as executor:
+            for transaction in transactions:
+                executor.submit(self.add_transaction, transaction)
+
+    def show_shard_status(self):
+        for shard in self.shards:
+            print(shard)
+
+# Fungsi untuk membuat transaksi acak
+def generate_random_transactions(num_transactions):
+    transactions = []
+    for _ in range(num_transactions):
+        sender = f"User{random.randint(1, 100)}"
+        receiver = f"User{random.randint(1, 100)}"
+        amount = random.uniform(1.0, 100.0)
+        transactions.append(Transaction(sender, receiver, amount))
+    return transactions
+
+# Simulasi penggunaan
+if __name__ == "__main__":
+    # Membuat ShardMaster dengan 5 shard
+    shard_master = ShardMaster(num_shards=5)
+    
+    # Menghasilkan 20 transaksi acak
+    transactions = generate_random_transactions(20)
+    
+    # Memproses transaksi menggunakan shard master
+    shard_master.process_transactions(transactions)
+
+    # Menampilkan status shard setelah transaksi diproses
+    shard_master.show_shard_status()
